@@ -1,8 +1,8 @@
 {
   "kind": "admin#directory#user",
-  "id": "11838281231231237799044",
-  "etag": "\"1NUDgs0Bhp3-BPJTox6qp123wE/7RR7KEPM34Ip7pvQfR7_NevmFFQ\"",
-  "primaryEmail": "tester@sterlingpj.com",
+  "id": "1183828112312123799044",
+  "etag": "\"1NUDgs0Bhp3-BP123123123wE/7RR7KEPM34Ip7pvQfR7_NevmFFQ\"",
+  "primaryEmail": "tester@email.com",
   "name": {
     "givenName": "Test",
     "familyName": "User",
@@ -18,11 +18,11 @@
   "ipWhitelisted": false,
   "emails": [
     {
-      "address": "tester@sterlingpj.com",
+      "address": "tester@email.com",
       "primary": true
     }
   ],
-  "customerId": "C03t232vf",
+  "customerId": "C03t12312vf",
   "orgUnitPath": "/Malaysia",
   "isMailboxSetup": true,
   "includeInGlobalAddressList": true
