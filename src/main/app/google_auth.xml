@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <http:request-config name="Google_OAuth2_API_Request" protocol="HTTPS" host="www.googleapis.com" port="443" basePath="oauth2" doc:name="HTTP Request Configuration"/>
+    <ee:object-store-caching-strategy name="Caching_Strategy" doc:name="Caching Strategy">
+        <in-memory-store name="authCache" maxEntries="1" entryTTL="30000" expirationInterval="30000"/>
+    </ee:object-store-caching-strategy>
+    <flow name="get_bearer_token">
+        <ee:cache cachingStrategy-ref="Caching_Strategy" doc:name="Cache">
+<!--             <set-payload value="#[null]" doc:name="Set Null Payload"/> -->
+            <component class="com.knyc.demo.GenerateJwtToken" doc:name="Generate JWT Token"/>
+            <dw:transform-message doc:name="Transform Message">
+                <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+{
+	"grant_type":"urn:ietf:params:oauth:grant-type:jwt-bearer",
+	"assertion": payload
+}]]></dw:set-payload>
+            </dw:transform-message>
+            <http:request config-ref="Google_OAuth2_API_Request" path="/v4/token" method="POST" doc:name="Get Bearer Token"/>
+            <dw:transform-message doc:name="Transform Message" metadata:id="3007214d-74ac-428f-86bf-e37203f322f3">
+                <dw:input-payload mimeType="application/json"/>
+                <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+payload.access_token]]></dw:set-payload>
+            </dw:transform-message>
+            <logger message="Generated JWT Auth: #[payload]" level="INFO" doc:name="Logger"/>
+        </ee:cache>
+    </flow>
+</mule>

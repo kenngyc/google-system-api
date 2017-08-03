@@ -1,0 +1,39 @@
+{
+  "kind": "admin#directory#orgUnits",
+  "etag": "\"1NUDgs0Bhp3-BPJTox6qpuQ4zwE/rMpz3S6g_j_XMoEpWrtAKkCcE8U\"",
+  "organizationUnits": [
+    {
+      "kind": "admin#directory#orgUnit",
+      "etag": "\"1NUDgs0Bhp3-BPJTox6qpuQ4zwE/oK-ZYWOeTPYVSSQMf-IyhMGcy8E\"",
+      "name": "Singapore",
+      "description": "",
+      "orgUnitPath": "/Singapore",
+      "orgUnitId": "id:04j6dk1q1ze89bt",
+      "parentOrgUnitPath": "/",
+      "parentOrgUnitId": "id:00gjdgxs24my4pr",
+      "blockInheritance": false
+    },
+    {
+      "kind": "admin#directory#orgUnit",
+      "etag": "\"1NUDgs0Bhp3-BPJTox6qpuQ4zwE/KfIwpuRsTH4ROQAiCuc93jTu7dI\"",
+      "name": "Malaysia",
+      "description": "",
+      "orgUnitPath": "/Malaysia",
+      "orgUnitId": "id:04j6dk1q4jdvrzm",
+      "parentOrgUnitPath": "/",
+      "parentOrgUnitId": "id:00gjdgxs24my4pr",
+      "blockInheritance": false
+    },
+    {
+      "kind": "admin#directory#orgUnit",
+      "etag": "\"1NUDgs0Bhp3-BPJTox6qpuQ4zwE/MT7-yxSq3M12-H10pVuYq8nD684\"",
+      "name": "Ninja",
+      "description": "",
+      "orgUnitPath": "/Ninja",
+      "orgUnitId": "id:04j6dk1q2yj627f",
+      "parentOrgUnitPath": "/",
+      "parentOrgUnitId": "id:00gjdgxs24my4pr",
+      "blockInheritance": false
+    }
+  ]
+}

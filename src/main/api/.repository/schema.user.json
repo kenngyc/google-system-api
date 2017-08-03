@@ -1,0 +1,80 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "definitions": {},
+    "id": "http://example.com/example.json",
+    "properties": {
+        "creationTime": {
+            "id": "/properties/creationTime",
+            "type": "string"
+        },
+        "customerId": {
+            "id": "/properties/customerId",
+            "type": "string"
+        },
+        "emails": {
+            "id": "/properties/emails",
+            "items": {
+                "id": "/properties/emails/items",
+                "properties": {
+                    "address": {
+                        "id": "/properties/emails/items/properties/address",
+                        "type": "string"
+                    },
+                    "primary": {
+                        "id": "/properties/emails/items/properties/primary",
+                        "type": "boolean"
+                    }
+                },
+                "type": "object"
+            },
+            "type": "array"
+        },
+        "id": {
+            "id": "/properties/id",
+            "type": "string"
+        },
+        "isAdmin": {
+            "id": "/properties/isAdmin",
+            "type": "boolean"
+        },
+        "isDelegatedAdmin": {
+            "id": "/properties/isDelegatedAdmin",
+            "type": "boolean"
+        },
+        "lastLoginTime": {
+            "id": "/properties/lastLoginTime",
+            "type": "string"
+        },
+        "name": {
+            "id": "/properties/name",
+            "properties": {
+                "familyName": {
+                    "id": "/properties/name/properties/familyName",
+                    "type": "string"
+                },
+                "fullName": {
+                    "id": "/properties/name/properties/fullName",
+                    "type": "string"
+                },
+                "givenName": {
+                    "id": "/properties/name/properties/givenName",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "orgUnitPath": {
+            "id": "/properties/orgUnitPath",
+            "type": "string"
+        },
+        "primaryEmail": {
+            "id": "/properties/primaryEmail",
+            "type": "string"
+        },
+        "suspended": {
+            "id": "/properties/suspended",
+            "type": "boolean"
+        }
+    },
+    "type": "object"
+}

@@ -1,0 +1,22 @@
+{
+  "id": "123123123123123",
+  "primaryEmail": "tester@email.com",
+  "name": {
+    "givenName": "John",
+    "familyName": "Doe",
+    "fullName": "John Doe"
+  },
+  "isAdmin": false,
+  "isDelegatedAdmin": false,
+  "lastLoginTime": "1970-01-01T00:00:00.000Z",
+  "creationTime": "2017-07-31T15:03:13.000Z",
+  "suspended": false,
+  "emails": [
+    {
+      "address": "john@email.com",
+      "primary": true
+    }
+  ],
+  "customerId": "C92#927d",
+  "orgUnitPath": "/"
+}

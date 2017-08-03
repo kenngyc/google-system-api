@@ -1,0 +1,30 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "definitions": {},
+    "id": "http://example.com/example.json",
+    "properties": {
+        "name": {
+            "id": "/properties/name",
+            "properties": {
+                "familyName": {
+                    "id": "/properties/name/properties/familyName",
+                    "type": "string"
+                },
+                "fullName": {
+                    "id": "/properties/name/properties/fullName",
+                    "type": "string"
+                },
+                "givenName": {
+                    "id": "/properties/name/properties/givenName",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "orgUnitPath": {
+            "id": "/properties/orgUnitPath",
+            "type": "string"
+        }
+    },
+    "type": "object"
+}

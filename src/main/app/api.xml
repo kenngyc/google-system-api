@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:context="http://www.springframework.org/schema/context" xmlns:api-platform-gw="http://www.mulesoft.org/schema/mule/api-platform-gw" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:objectstore="http://www.mulesoft.org/schema/mule/objectstore" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.mulesoft.org/schema/mule/objectstore http://www.mulesoft.org/schema/mule/objectstore/current/mule-objectstore.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/api-platform-gw http://www.mulesoft.org/schema/mule/api-platform-gw/current/mule-api-platform-gw.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd">
+    <http:listener-config name="api-httpListenerConfig" host="0.0.0.0" port="8081" doc:name="HTTP Listener Configuration" />
+    <apikit:config name="api-config" raml="api.raml" consoleEnabled="false" doc:name="Router" />
+    <http:request-config name="Google_GSuite_API_Request" protocol="HTTPS" host="www.googleapis.com" port="443" basePath="admin" doc:name="HTTP Request Configuration" />
+    <api-platform-gw:api apiName="GSuite System API" version="1.0.0" flowRef="api-main" create="true" apikitRef="api-config" doc:name="API Autodiscovery"/>
+    <flow name="api-main">
+        <http:listener config-ref="api-httpListenerConfig" path="/api/*" doc:name="HTTP" />
+        <apikit:router config-ref="api-config" doc:name="APIkit Router" />
+        <exception-strategy ref="api-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy" />
+    </flow>
+    <flow name="api-console">
+        <http:listener config-ref="api-httpListenerConfig" path="/console/*" doc:name="HTTP" />
+        <apikit:console config-ref="api-config" doc:name="APIkit Console" />
+    </flow>
+    <flow name="get:/orgUnit:api-config">
+        <enricher target="#[flowVars.bearerToken]" doc:name="Message Enricher">
+            <flow-ref name="get_bearer_token" doc:name="get_bearer_token" />
+        </enricher>
+        <http:request config-ref="Google_GSuite_API_Request" path="/directory/v1/customer/my_customer/orgunits/" method="GET" doc:name="Get OrgUnits">
+            <http:request-builder>
+                <http:header headerName="Authorization" value="#[&quot;Bearer &quot; + flowVars.bearerToken]" />
+            </http:request-builder>
+        </http:request>
+        <dw:transform-message doc:name="Transform Message" metadata:id="0ef65a7e-4a1d-4701-a3ce-3af77aef01f0">
+            <dw:input-payload mimeType="application/json" />
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+payload.organizationUnits map ((organizationUnit , indexOfOrganizationUnit) -> {
+	name: organizationUnit.name,
+	orgId: organizationUnit.orgUnitId
+})]]></dw:set-payload>
+        </dw:transform-message>
+    </flow>
+    <flow name="get:/users/{userId}:api-config">
+    	<enricher target="#[flowVars.bearerToken]" doc:name="Message Enricher">
+            <flow-ref name="get_bearer_token" doc:name="get_bearer_token" />
+        </enricher>
+        <http:request config-ref="Google_GSuite_API_Request" path="/directory/v1/users/{userId}" method="GET" doc:name="Get User Details" metadata:id="874e5298-7231-4c95-bd8a-17eceb56335b">
+            <http:request-builder>
+                <http:uri-param paramName="userId" value="#[flowVars.userId]"/>
+                <http:header headerName="Authorization" value="#[&quot;Bearer &quot; + flowVars.bearerToken]"/>
+            </http:request-builder>
+        </http:request>
+        <dw:transform-message doc:name="Transform Message" metadata:id="070c5e13-dd71-4874-9fab-46a666025769">
+            <dw:input-payload mimeType="application/json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	creationTime: payload.creationTime,
+	customerId: payload.customerId,
+	emails: payload.emails map ((email , indexOfEmail) -> {
+		address: email.address,
+		primary: email.primary
+	}),
+	id: payload.id,
+	isAdmin: payload.isAdmin,
+	isDelegatedAdmin: payload.isDelegatedAdmin,
+	lastLoginTime: payload.lastLoginTime,
+	name: {
+		familyName: payload.name.familyName,
+		fullName: payload.name.fullName,
+		givenName: payload.name.givenName
+	},
+	orgUnitPath: payload.orgUnitPath,
+	primaryEmail: payload.primaryEmail,
+	suspended: payload.suspended
+}]]></dw:set-payload>
+        </dw:transform-message>
+    </flow>
+    <flow name="post:/users/{userId}:application/json:api-config">
+        <enricher target="#[flowVars.bearerToken]" doc:name="Message Enricher">
+            <flow-ref name="get_bearer_token" doc:name="get_bearer_token" />
+        </enricher>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:input-payload doc:sample="sample_data/json.json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	name: {
+		givenName: payload.name.givenName,
+		familyName: payload.name.familyName,
+		fullName: payload.name.fullName
+	},
+	orgUnitPath: payload.orgUnitPath
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <http:request config-ref="Google_GSuite_API_Request" path="/directory/v1/users/{userId}" method="PUT" doc:name="Update User Profile" metadata:id="658d3a27-d1b9-4ba9-82da-afd8b7e3b9e0">
+            <http:request-builder>
+                <http:uri-param paramName="userId" value="#[flowVars.userId]"/>
+                <http:header headerName="Authorization" value="#[&quot;Bearer &quot; + flowVars.bearerToken]"/>
+            </http:request-builder>
+        </http:request>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	creationTime: payload.creationTime,
+	customerId: payload.customerId,
+	emails: payload.emails map ((email , indexOfEmail) -> {
+		address: email.address,
+		primary: email.primary
+	}),
+	id: payload.id,
+	isAdmin: payload.isAdmin,
+	isDelegatedAdmin: payload.isDelegatedAdmin,
+	lastLoginTime: payload.lastLoginTime,
+	name: payload.name,
+	orgUnitPath: payload.orgUnitPath,
+	primaryEmail: payload.primaryEmail,
+	suspended: payload.suspended
+}]]></dw:set-payload>
+        </dw:transform-message>
+    </flow>
+    <apikit:mapping-exception-strategy name="api-apiKitGlobalExceptionMapping">
+        <apikit:mapping statusCode="404">
+            <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+            <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }" doc:name="Set Payload" />
+        </apikit:mapping>
+        <apikit:mapping statusCode="405">
+            <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+            <set-payload value="{ &quot;message&quot;: &quot;Method not allowed&quot; }" doc:name="Set Payload" />
+        </apikit:mapping>
+        <apikit:mapping statusCode="415">
+            <apikit:exception value="org.mule.module.apikit.exception.UnsupportedMediaTypeException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+            <set-payload value="{ &quot;message&quot;: &quot;Unsupported media type&quot; }" doc:name="Set Payload" />
+        </apikit:mapping>
+        <apikit:mapping statusCode="406">
+            <apikit:exception value="org.mule.module.apikit.exception.NotAcceptableException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+            <set-payload value="{ &quot;message&quot;: &quot;Not acceptable&quot; }" doc:name="Set Payload" />
+        </apikit:mapping>
+        <apikit:mapping statusCode="400">
+            <apikit:exception value="org.mule.module.apikit.exception.BadRequestException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property" />
+            <set-payload value="{ &quot;message&quot;: &quot;Bad request&quot; }" doc:name="Set Payload" />
+        </apikit:mapping>
+    </apikit:mapping-exception-strategy>
+</mule>

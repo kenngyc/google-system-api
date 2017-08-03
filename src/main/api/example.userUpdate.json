@@ -1,0 +1,8 @@
+{
+  "name": {
+    "givenName": "John",
+    "familyName": "Doe",
+    "fullName": "John Doe"
+  },
+  "orgUnitPath": "/"
+}

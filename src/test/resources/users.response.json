@@ -1,0 +1,29 @@
+{
+  "kind": "admin#directory#user",
+  "id": "11838281231231237799044",
+  "etag": "\"1NUDgs0Bhp3-BPJTox6qp123wE/7RR7KEPM34Ip7pvQfR7_NevmFFQ\"",
+  "primaryEmail": "tester@sterlingpj.com",
+  "name": {
+    "givenName": "Test",
+    "familyName": "User",
+    "fullName": "Test User"
+  },
+  "isAdmin": false,
+  "isDelegatedAdmin": false,
+  "lastLoginTime": "1970-01-01T00:00:00.000Z",
+  "creationTime": "2017-07-31T15:03:13.000Z",
+  "agreedToTerms": false,
+  "suspended": false,
+  "changePasswordAtNextLogin": true,
+  "ipWhitelisted": false,
+  "emails": [
+    {
+      "address": "tester@sterlingpj.com",
+      "primary": true
+    }
+  ],
+  "customerId": "C03t232vf",
+  "orgUnitPath": "/Malaysia",
+  "isMailboxSetup": true,
+  "includeInGlobalAddressList": true
+}
